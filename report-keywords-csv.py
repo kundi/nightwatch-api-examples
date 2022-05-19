@@ -17,7 +17,7 @@ params = {
 
 page = 1
 
-f = open('report', 'w')
+f = open('report.csv', 'w')
 writer = csv.writer(f)
 
 results = []
