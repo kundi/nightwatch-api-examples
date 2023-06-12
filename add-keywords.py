@@ -2,8 +2,8 @@ import requests
 import csv
 import sys
 
-url_id = "304267"
-token = "UKRYv0dRbQYBT7N5U0Ua9AdfXm8228BmD9eKtbPl9LY"
+url_id = ""
+token = ""
 
 url = f"https://api.nightwatch.io/api/v1/urls/{url_id}/keywords/batch_create"
 params = {"access_token": token}
