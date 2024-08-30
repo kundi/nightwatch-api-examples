@@ -3,8 +3,8 @@ import csv
 import codecs
 
 
-url_id = "317483"
-token = "c-novqTfkUzrNZ63b8e5o0jfm2Pw27T4rXI6MGYD65I"
+url_id = ""
+token = ""
 
 url = "https://api.nightwatch.io/api/v1/urls/" + url_id + "/keywords"
 competitor_url = "https://api.nightwatch.io/api/v1/urls/" + url_id + "/competitors"
