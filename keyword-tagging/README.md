@@ -2,5 +2,5 @@
 This script will tag the list of provided keywords for a specified URL with the corresponding tags.
 
 # Run script
-`pip install streamlit requests`
+`pip install streamlit requests openpyxl`
 `streamlit run keyword-tagging/run.py`
