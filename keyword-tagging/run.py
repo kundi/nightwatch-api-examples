@@ -92,7 +92,6 @@ def main():
         engine += [""] * (max_length - len(engine))
         googleHL += [""] * (max_length - len(googleHL))
         googleGL += [""] * (max_length - len(googleGL))
-
         # Now zip the lists safely
         keyword_data = zip(keywords, engine, googleHL, googleGL)
 
@@ -124,16 +123,20 @@ def main():
                     engine = str(row.iloc[1]) if pd.notna(row.iloc[1]) else ""
                     googleHL = str(row.iloc[2]) if pd.notna(row.iloc[2]) else ""
                     googleGL = str(row.iloc[3]) if pd.notna(row.iloc[3]) else ""
-                    tag_add = row.iloc[4] if len(row) > 4 else None
-                    tag_remove = row.iloc[5] if len(row) > 5 else None
+                    tag_add = str(row.iloc[4]) if len(row) > 4 and pd.notna(row.iloc[4]) else ""
+                    tag_remove = str(row.iloc[5]) if len(row) > 5 and pd.notna(row.iloc[5]) else ""
+
+                    tags_to_add_list = [t.strip() for t in tag_add.split(",") if t.strip()]
+                    tags_to_remove_list = [t.strip() for t in tag_remove.split(",") if t.strip()]
+
                     if pd.notna(query):
                         keyword_list.append({
                             "query": query,
                             "engine": engine,
                             "google_hl": googleHL,
                             "google_gl": googleGL,
-                            "tags_to_add": tag_add if pd.notna(tag_add) else "",
-                            "tags_to_remove": tag_remove if pd.notna(tag_remove) else ""
+                            "tags_to_add": tags_to_add_list,
+                            "tags_to_remove": tags_to_remove_list
                         })
                     else:
                         # Handle cases where the row is too short
@@ -154,13 +157,6 @@ def main():
         with st.spinner("Fetching keywords..."):
             all_keywords = fetch_all_keywords(url_id, access_token)
             st.success(f"Fetched {len(all_keywords)} keywords.")
-        # TESTING
-        # all_keywords = [
-        #     {"id": 1, "query": "apple", "engine": "google", "google_hl": "en", "google_gl": "US"},
-        #     {"id": 2, "query": "banana", "engine": "bing", "google_hl": "fr", "google_gl": "FR"},
-        #     {"id": 3, "query": "orange", "engine": "google", "google_hl": "es", "google_gl": "ES"},
-        #     {"id": 4, "query": "apple", "engine": "google", "google_hl": "en", "google_gl": "CA"},
-
         progress_bar = st.progress(0)
         for i, keyword_data in enumerate(keyword_list):
 
