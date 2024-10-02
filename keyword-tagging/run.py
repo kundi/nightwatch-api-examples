@@ -65,7 +65,7 @@ def main():
     tags_to_remove = []
 
     if input_mode == "Manual Input":
-        keywords = st.text_area("Keyword List (one per line, only required field)")
+        keywords = st.text_area("Keyword List (one per line, if omitted will not search by engine)")
         engine = st.text_area("Engine List (one per line, if omitted will not search by engine)")
         googleHL = st.text_area("Google HL List (one per line, if omitted will not search by googleHL)")
         googleGL = st.text_area("Google GL List (one per line, if omitted will not search by googleGL)")
