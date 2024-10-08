@@ -112,39 +112,39 @@ def main():
         if uploaded_file:
             df = None
             if uploaded_file.name.endswith(".csv"):
-                df = pd.read_csv(uploaded_file, header=None)
+                df = pd.read_csv(uploaded_file)
             elif uploaded_file.name.endswith(".xlsx"):
-                df = pd.read_excel(uploaded_file, header=None)
+                df = pd.read_excel(uploaded_file)
 
+            if df is not None:
+                for idx, row in df.iterrows():
+                    try:
+                        query = str(row.get('query')) if pd.notna(row.get('query')) else None
+                        engine = str(row.get('engine')) if pd.notna(row.get('engine')) else ""
+                        googleHL = str(row.get('google_hl')) if pd.notna(row.get('google_hl')) else ""
+                        googleGL = str(row.get('google_gl')) if pd.notna(row.get('google_gl')) else ""
+                        tag_add = str(row.get('tags_to_add')) if pd.notna(row.get('tags_to_add')) else ""
+                        tag_remove = str(row.get('tags_to_remove')) if pd.notna(row.get('tags_to_remove')) else ""
 
-            for idx, row in df.iterrows():
-                try:
-                    query = str(row.iloc[0]) if pd.notna(row.iloc[0]) else None
-                    engine = str(row.iloc[1]) if pd.notna(row.iloc[1]) else ""
-                    googleHL = str(row.iloc[2]) if pd.notna(row.iloc[2]) else ""
-                    googleGL = str(row.iloc[3]) if pd.notna(row.iloc[3]) else ""
-                    tag_add = str(row.iloc[4]) if len(row) > 4 and pd.notna(row.iloc[4]) else ""
-                    tag_remove = str(row.iloc[5]) if len(row) > 5 and pd.notna(row.iloc[5]) else ""
+                        tags_to_add_list = [t.strip() for t in tag_add.split(",") if t.strip()]
+                        tags_to_remove_list = [t.strip() for t in tag_remove.split(",") if t.strip()]
 
-                    tags_to_add_list = [t.strip() for t in tag_add.split(",") if t.strip()]
-                    tags_to_remove_list = [t.strip() for t in tag_remove.split(",") if t.strip()]
+                        if pd.notna(query):
+                            keyword_list.append({
+                                "query": query,
+                                "engine": engine,
+                                "google_hl": googleHL,
+                                "google_gl": googleGL,
+                                "tags_to_add": tags_to_add_list,
+                                "tags_to_remove": tags_to_remove_list
+                            })
+                        else:
+                            # Handle cases where the row is too short
+                            st.warning(f"Row {idx+1} does not contain query column. Skipping this row.")
 
-                    if pd.notna(query):
-                        keyword_list.append({
-                            "query": query,
-                            "engine": engine,
-                            "google_hl": googleHL,
-                            "google_gl": googleGL,
-                            "tags_to_add": tags_to_add_list,
-                            "tags_to_remove": tags_to_remove_list
-                        })
-                    else:
+                    except IndexError:
                         # Handle cases where the row is too short
-                        st.warning(f"Row {idx+1} does not contain query column. Skipping this row.")
-
-                except IndexError:
-                    # Handle cases where the row is too short
-                    st.warning(f"Row {idx+1} does not contain enough columns. Skipping this row.")
+                        st.warning(f"Row {idx+1} does not contain enough columns. Skipping this row.")
 
     if st.button("Execute"):
         if not all([access_token, url_id]):
@@ -153,7 +153,7 @@ def main():
         if not keyword_list:
             st.error("No keywords to process.")
             return
-
+        st.info(keyword_list)
         with st.spinner("Fetching keywords..."):
             all_keywords = fetch_all_keywords(url_id, access_token)
             st.success(f"Fetched {len(all_keywords)} keywords.")
