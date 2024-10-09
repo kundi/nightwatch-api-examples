@@ -1,8 +1,25 @@
 
+from io import BytesIO, StringIO
 import streamlit as st
 import requests
 import time
 import pandas as pd
+
+def create_sample_csv():
+    sample_data = {
+        "query": ["example query 1", "example query 2", "example query 3"],
+        "engine": ["google", "bing", "duckduckgo"],
+        "google_hl": ["en", "de", "de"],
+        "google_gl": ["US", "DE", "DE"],
+        "tags_to_add": ["tag1, tag2", "tag3", "tag5, tag6"],
+        "tags_to_remove": ["", "tag1", ""]
+    }
+    df = pd.DataFrame(sample_data)
+    
+    # Convert to BytesIO object
+    output = StringIO()
+    df.to_csv(output, index=False)
+    return output.getvalue()
 
 def fetch_all_keywords(url_id, access_token, limit=100):
     """Fetch all keywords for a given URL ID."""
@@ -108,6 +125,14 @@ def main():
                 "tags_to_remove": tags_to_remove_list
             })
     else:
+        sample_csv = create_sample_csv()
+        st.download_button(
+            label="Download CSV Example",
+            data=sample_csv,
+            file_name="keyword_example.csv",
+            mime="text/csv"
+        )
+
         uploaded_file = st.file_uploader("Upload File", type=["csv", "xlsx"])
         if uploaded_file:
             df = None
